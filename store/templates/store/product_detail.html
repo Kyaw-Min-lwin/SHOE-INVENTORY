@@ -1,0 +1,96 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<div class="row g-5 align-items-center">
+    <!-- Image Gallery (Left) -->
+    <div class="col-md-6">
+        <div class="detail-img overflow-hidden position-relative">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid w-100" alt="{{ product.name }}"
+                style="transform: scale(1.0); transition: transform 0.5s;">
+            {% else %}
+            <img src="https://via.placeholder.com/600x600?text=LATLI" class="img-fluid w-100" alt="No Image">
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Details (Right) -->
+    <div class="col-md-6">
+        <div class="ps-lg-4">
+            <span class="badge bg-dark mb-2">{{ product.category.name|default:"Exclusive" }}</span>
+            <h1 class="display-5 fw-bold mb-3">{{ product.name }}</h1>
+            <h2 class="text-muted mb-4">${{ product.current_sell_price }}</h2>
+
+            <p class="lead mb-4 text-muted">
+                Available now in store. High quality materials and exclusive design.
+            </p>
+
+            <div class="row mb-4">
+                <div class="col-6">
+                    <p class="small text-uppercase text-muted mb-1">Size</p>
+                    <p class="fw-bold">{{ product.size }}</p>
+                </div>
+                <div class="col-6">
+                    <p class="small text-uppercase text-muted mb-1">Color</p>
+                    <p class="fw-bold">{{ product.color|default:"Standard" }}</p>
+                </div>
+                <div class="col-6">
+                    <p class="small text-uppercase text-muted mb-1">Availability</p>
+                    {% if product.current_stock > 0 %}
+                    <p class="text-success fw-bold"><i class="fa fa-check-circle me-1"></i>In Stock ({{
+                        product.current_stock }})</p>
+                    {% else %}
+                    <p class="text-danger fw-bold">Sold Out</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                {% if product.current_stock > 0 %}
+                <a href="https://wa.me/?text=Hi%2C%20I%20am%20interested%20in%20buying%20{{ product.name }}%20(Size%20{{ product.size }})"
+                    target="_blank" class="btn btn-primary-custom btn-lg">
+                    <i class="fab fa-whatsapp me-2"></i>Order on WhatsApp
+                </a>
+                {% else %}
+                <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+                {% endif %}
+
+                <a href="{% url 'product_list' %}" class="btn btn-outline-dark btn-lg">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recommendations -->
+{% if related_products %}
+<div class="mt-5 pt-5">
+    <h3 class="mb-4">You might also like</h3>
+    <div class="row row-cols-2 row-cols-md-4 g-4">
+        {% for rel in related_products %}
+        <div class="col">
+            <a href="{% url 'product_detail' rel.pk %}" class="text-decoration-none">
+                <div class="card product-card h-100 shadow-sm border-0">
+                    <div class="card-img-wrapper" style="height: 200px;">
+                        {% if rel.image %}
+                        <img src="{{ rel.image.url }}" class="card-img-top" alt="{{ rel.name }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/300" class="card-img-top">
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-dark text-truncate">{{ rel.name }}</h6>
+                        <div class="text-muted small">${{ rel.current_sell_price }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
