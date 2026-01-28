@@ -1,0 +1,11 @@
+/* Fix for Unfold Admin DatePicker 
+   Forces the calendar popup to appear ABOVE the filter sidebar 
+*/
+.flatpickr-calendar {
+    z-index: 99999 !important;
+}
+
+/* In case standard Django widgets are used */
+.calendarbox, .clockbox {
+    z-index: 99999 !important;
+}

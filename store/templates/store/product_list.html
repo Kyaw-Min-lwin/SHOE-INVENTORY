@@ -4,32 +4,30 @@
 <div class="row">
     <!-- Sidebar: Filters -->
     <div class="col-lg-3 mb-5">
-        <div class="filter-card sticky-top" style="top: 100px;">
-            <p class="filter-header text-muted">Collections</p>
+        <div class="p-3 bg-light rounded-3 sticky-top" style="top: 100px; z-index: 1020;">
+            <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
+                Collections</h6>
             <div class="d-flex flex-column">
-                <a href="{% url 'product_list' %}"
-                    class="category-link {% if not request.GET.category %}active{% endif %}">
+                <a href="{% url 'product_list' %}" class="category-link {% if not current_category %}active{% endif %}">
                     <span>All Collections</span>
-                    <i class="fa fa-chevron-right float-end mt-1" style="font-size: 0.7rem;"></i>
                 </a>
                 {% for cat in categories %}
                 <a href="?category={{ cat.id }}"
-                    class="category-link {% if request.GET.category == cat.id|stringformat:'s' %}active{% endif %}">
+                    class="category-link {% if current_category == cat.id %}active{% endif %}">
                     <span>{{ cat.name }}</span>
-                    <i class="fa fa-chevron-right float-end mt-1" style="font-size: 0.7rem;"></i>
                 </a>
                 {% endfor %}
             </div>
-
-            <!-- Optional: Add a Size Filter here later if you want -->
         </div>
     </div>
 
     <!-- Product Grid -->
     <div class="col-lg-9">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h4 mb-0">New Arrivals</h2>
-            <span class="text-muted small">{{ products|length }} items found</span>
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <h2 class="fw-bold mb-0">New Arrivals</h2>
+                <p class="text-muted small mb-0">{{ products|length }} items available</p>
+            </div>
         </div>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -38,9 +36,9 @@
             <div class="col">
                 <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none text-dark">
                     <div class="card product-card h-100 shadow-sm">
-                        <!-- Badge -->
-                        {% if product.current_stock < 3 %} <div class="stock-badge text-warning"><i
-                                class="fa fa-fire me-1"></i>Low Stock
+                        <!-- Low Stock Badge -->
+                        {% if product.current_stock < 3 %} <div class="stock-badge text-warning border border-warning">
+                            <i class="fa fa-exclamation-circle me-1"></i>Low Stock
                     </div>
                     {% endif %}
 
@@ -48,16 +46,17 @@
                         {% if product.image %}
                         <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
                         {% else %}
-                        <img src="https://via.placeholder.com/400x500/f8f9fa/dee2e6?text=LATLI" class="card-img-top"
-                            alt="No Image">
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-secondary text-white">No
+                            Image</div>
                         {% endif %}
                     </div>
 
                     <div class="card-body">
-                        <div class="category-tag mb-1">{{ product.category.name|default:"Shoes" }}</div>
-                        <h5 class="card-title mb-2 text-truncate">{{ product.name }}</h5>
-                        <div class="d-flex justify-content-between align-items-end mt-3">
-                            <span class="price-tag">${{ product.current_sell_price }}</span>
+                        <small class="text-muted text-uppercase" style="font-size: 0.7rem;">
+                            {{product.category.name|default:"Shoes" }}</small>
+                        <h5 class="card-title text-truncate fw-bold mb-1">{{ product.name }}</h5>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="fs-5 fw-bold">${{ product.current_sell_price }}</span>
                             <span class="badge bg-light text-dark border">Size: {{ product.size }}</span>
                         </div>
                     </div>
@@ -66,36 +65,40 @@
         </div>
         {% empty %}
         <div class="col-12 py-5 text-center">
-            <h3 class="text-muted">No shoes found here...</h3>
-            <a href="{% url 'product_list' %}" class="btn btn-outline-dark mt-3">Clear Filters</a>
+            <div class="p-5 bg-light rounded-3">
+                <i class="fa fa-search fa-3x text-muted mb-3"></i>
+                <h3 class="text-muted">No shoes found here...</h3>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-dark mt-3">View All Products</a>
+                </div>
         </div>
         {% endfor %}
-
-        <!-- Sold Out Section -->
-        {% if sold_out %}
-        <div class="col-12 mt-5 mb-3">
-            <hr>
-            <h4 class="text-muted text-center mt-4">Recently Sold Out</h4>
-        </div>
-        {% for product in sold_out %}
-        <div class="col">
-            <div class="card product-card sold-out-card h-100">
-                <div class="stock-badge bg-dark text-white">SOLD OUT</div>
-                <div class="card-img-wrapper">
-                    {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                    {% else %}
-                    <img src="https://via.placeholder.com/400x500?text=Sold" class="card-img-top" alt="Sold Out">
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title text-muted">{{ product.name }}</h5>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-        {% endif %}
     </div>
+
+    <!-- Sold Out Section -->
+    {% if sold_out %}
+    <div class="mt-5 pt-4 border-top">
+        <h4 class="text-center text-muted mb-4 fw-light text-uppercase" style="letter-spacing: 2px;">Recently Sold Out
+        </h4>
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 opacity-75">
+            {% for product in sold_out %}
+            <div class="col">
+                <div class="card product-card sold-out-card h-100 border-0 bg-light">
+                    <div class="position-absolute top-50 start-50 translate-middle badge bg-dark text-uppercase p-2 z-2"
+                        style="letter-spacing: 1px;">Sold Out</div>
+                    <div class="card-img-wrapper" style="height: 200px;">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" style="filter: grayscale(100%);" alt="{{ product.name }}">
+                        {% endif %}
+                        </div>
+                    <div class="card-body p-2 text-center">
+                        <h6 class="card-title text-muted mb-0 small">{{ product.name }}</h6>
+                    </div>
+                    </div>
+                    </div>
+                    {% endfor %}
+        </div>
+        </div>
+    {% endif %}
 </div>
 </div>
 {% endblock %}

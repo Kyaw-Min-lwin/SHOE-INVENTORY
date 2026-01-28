@@ -1,0 +1,18 @@
+/* Let the product column take more space naturally */
+.inline-group td.field-product {
+    width: 45%;
+    /* takes a good chunk of the row */
+    max-width: 100%;
+}
+
+/* Make select2 fill the table cell */
+.inline-group td.field-product .select2-container {
+    width: 100% !important;
+    min-width: 0;
+    /* prevents overflow issues */
+}
+
+/* Optional: better UX when focused */
+.inline-group td.field-product .select2-selection {
+    min-height: 36px;
+}

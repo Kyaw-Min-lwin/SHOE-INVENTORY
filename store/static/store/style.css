@@ -6,6 +6,10 @@
     /* Deep Black */
     --accent-color: #c9a227;
     /* Muted Gold */
+    --whatsapp-green: #25D366;
+    /* WhatsApp Brand Color */
+    --whatsapp-hover: #128C7E;
+    /* WhatsApp Darker Green */
     --bg-light: #f8f9fa;
     --text-muted: #6c757d;
     --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -34,6 +38,7 @@ h1, h2, h3, h4, h5, .navbar-brand {
     font-weight: 700;
     font-size: 1.5rem;
     color: var(--primary-color) !important;
+    letter-spacing: 1px;
 }
 
 /* --- Product Cards --- */
@@ -44,6 +49,7 @@ h1, h2, h3, h4, h5, .navbar-brand {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
+    box-shadow: var(--card-shadow);
 }
 
 .product-card:hover {
@@ -55,6 +61,7 @@ h1, h2, h3, h4, h5, .navbar-brand {
     height: 300px;
     overflow: hidden;
     position: relative;
+    background-color: #f1f1f1;
 }
 
 .card-img-top {
@@ -77,8 +84,9 @@ h1, h2, h3, h4, h5, .navbar-brand {
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(4px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     z-index: 2;
 }
 
@@ -88,16 +96,17 @@ h1, h2, h3, h4, h5, .navbar-brand {
 }
 
 .price-tag {
-    color: var(--accent-color);
+    color: var(--primary-color);
     font-weight: 700;
     font-size: 1.1rem;
 }
 
 .category-tag {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--text-muted);
+    font-weight: 600;
 }
 
 /* --- Sidebar Filters --- */
@@ -112,16 +121,18 @@ h1, h2, h3, h4, h5, .navbar-brand {
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 1px;
+    color: var(--text-muted);
 }
 
 .category-link {
     display: block;
-    padding: 8px 12px;
+    padding: 10px 15px;
     margin-bottom: 5px;
     border-radius: 8px;
     color: var(--text-muted);
     transition: all 0.2s;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .category-link:hover, .category-link.active {
@@ -129,32 +140,41 @@ h1, h2, h3, h4, h5, .navbar-brand {
     color: var(--primary-color);
     box-shadow: var(--card-shadow);
     transform: translateX(5px);
+    font-weight: 600;
 }
 
 /* --- Detail Page --- */
 .detail-img {
     border-radius: 16px;
     box-shadow: var(--card-shadow);
+    background-color: white;
 }
 
+/* Custom WhatsApp Button */
 .btn-primary-custom {
-    background-color: var(--primary-color);
+    background-color: var(--whatsapp-green);
     color: white;
     padding: 12px 30px;
     border-radius: 50px;
     font-weight: 600;
-    transition: transform 0.2s;
+    border: none;
+    transition: all 0.2s ease;
 }
 
 .btn-primary-custom:hover {
     transform: scale(1.02);
-    background-color: black;
+    background-color: var(--whatsapp-hover);
     color: white;
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
 }
 
 /* --- Sold Out State --- */
 .sold-out-card {
     opacity: 0.7;
     filter: grayscale(1);
-    pointer-events: none;
+}
+
+.sold-out-card:hover {
+    filter: grayscale(0);
+    opacity: 1;
 }

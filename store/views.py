@@ -1,58 +1,56 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
 from .models import Product, Category
 
 
 def product_list(request):
-    """
-    The main catalog page.
-    Handles searching, category filtering, and stock logic.
-    """
-    # 1. Start with all products
-    products = Product.objects.all()
+    # 1. Get all products
+    all_products = Product.objects.all()
 
-    # 2. Get search query (e.g. ?q=nike)
-    query = request.GET.get("q")
-    if query:
-        # Search in name, color, OR size
-        products = products.filter(
-            Q(name__icontains=query)
-            | Q(color__icontains=query)
-            | Q(size__icontains=query)
-        )
-
-    # 3. Get category filter (e.g. ?category=1)
+    # 2. Filter by Category
     category_id = request.GET.get("category")
     if category_id:
-        products = products.filter(category_id=category_id)
+        all_products = all_products.filter(category__id=category_id)
 
-    # 4. Stock Logic: Separate "Available" vs "Sold Out"
-    # Note: Since current_stock is a property, we can't filter() by it in SQL easily.
-    # We will do a Python list comprehension (efficient enough for <5000 items).
-    available_products = [p for p in products if p.current_stock > 0]
-    sold_out_products = [p for p in products if p.current_stock <= 0]
+    # 3. Separate Stock in Python (since current_stock is a property)
+    # This is fine for < 1000 items. For more, we'd use DB annotations.
+    available_products = []
+    sold_out_products = []
 
-    # 5. Context for the template
+    for p in all_products:
+        if p.current_stock > 0:
+            available_products.append(p)
+        else:
+            sold_out_products.append(p)
+
+    # 4. Get categories for sidebar
+    categories = Category.objects.all()
+
     context = {
-        "products": available_products,  # The ones customers can buy
-        "sold_out": sold_out_products,  # Optional: Show at bottom or hide
-        "categories": Category.objects.all(),  # For the sidebar filter
-        "search_query": query,
+        "products": available_products,
+        "sold_out": sold_out_products,
+        "categories": categories,
+        "current_category": int(category_id) if category_id else None,
     }
     return render(request, "store/product_list.html", context)
 
 
 def product_detail(request, pk):
-    """
-    The single product page.
-    Shows large image and details.
-    """
     product = get_object_or_404(Product, pk=pk)
 
-    # Simple recommendation logic: Show other shoes in same category
+    # 1. Find Related Products (Same category, excluding current one)
     related_products = Product.objects.filter(category=product.category).exclude(pk=pk)[
         :4
     ]
 
-    context = {"product": product, "related_products": related_products}
+    # 2. WhatsApp Link
+    # Replace with real phone number
+    shop_phone = "1234567890"
+    text = f"Hi, I'm interested in the {product.name} (Size: {product.size}). Is it available?"
+    whatsapp_url = f"https://wa.me/{shop_phone}?text={text}"
+
+    context = {
+        "product": product,
+        "related_products": related_products,
+        "whatsapp_url": whatsapp_url,
+    }
     return render(request, "store/product_detail.html", context)

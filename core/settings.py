@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "unfold.contrib.filters",
     "cloudinary_storage",
     "cloudinary",
     "store",  # <--- Your App
@@ -152,7 +153,6 @@ UNFOLD = {
                     {
                         "title": "All Products",
                         "icon": "inventory_2",
-                        # FIX: Changed 'url' to 'link', and used reverse_lazy
                         "link": reverse_lazy("admin:store_product_changelist"),
                     },
                     {
