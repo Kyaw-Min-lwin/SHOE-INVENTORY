@@ -1,0 +1,32 @@
+{% extends "admin/change_list.html" %}
+
+{% block result_list %}
+<!-- Custom KPI Row -->
+{% if kpi %}
+<div class="mt-8 mb-8 mx-4 md:mx-0">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% for card in kpi %}
+        <div
+            class="p-5 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 border-l-4 border-l-{{ card.color }}">
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {{ card.title }}
+                </span>
+
+                <span class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
+                    {{ card.metric }}
+                </span>
+
+                <span class="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                    {{ card.footer }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Standard Results List -->
+{{ block.super }}
+{% endblock %}

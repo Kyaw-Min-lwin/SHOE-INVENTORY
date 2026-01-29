@@ -4,6 +4,7 @@ Django settings for core project.
 
 from pathlib import Path
 import os
+import dj_database_url
 from django.urls import reverse_lazy
 import cloudinary
 import cloudinary_storage
@@ -11,14 +12,17 @@ import cloudinary_storage
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 # --- SECURITY: Load secrets from Environment or .env file ---
-# (Make sure you created the .env file I mentioned in the last step!)
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-fallback-key-for-dev-only")
 
-DEBUG = True
+DEBUG = "RENDER" not in os.environ
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com", "https://*.railway.app"]
 
 # Application definition
 
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -69,10 +74,9 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 # Database
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default="sqlite:///" + str(BASE_DIR / "db.sqlite3"), conn_max_age=600
+    )
 }
 
 
@@ -96,19 +100,15 @@ USE_TZ = True
 
 # --- CLOUDINARY CONFIGURATION ---
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", "dxtwewfqm"),
-    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", "954413273429273"),
-    "API_SECRET": os.environ.get(
-        "CLOUDINARY_API_SECRET", "oJcinIyq2YDUyEi1SxMs4UtjHQc"
-    ),
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
 }
 
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME", "dxtwewfqm"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY", "954413273429273"),
-    api_secret=os.environ.get(
-        "CLOUDINARY_API_SECRET", "oJcinIyq2YDUyEi1SxMs4UtjHQc"
-    ),
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
     secure=True,
 )
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
@@ -120,6 +120,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Enable Whitenoise to compress and serve static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # --- UNFOLD ADMIN THEME SETTINGS ---
