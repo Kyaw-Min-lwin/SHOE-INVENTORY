@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
+from django.db.models import Q
 
 
 def product_list(request):
@@ -10,6 +11,14 @@ def product_list(request):
     category_id = request.GET.get("category")
     if category_id:
         all_products = all_products.filter(category__id=category_id)
+
+    query = request.GET.get("q")
+    if query:
+        all_products = all_products.filter(
+            Q(name__icontains=query)
+            | Q(code__icontains=query)
+            | Q(color__icontains=query)
+        )
 
     # 3. Separate Stock in Python (since current_stock is a property)
     # This is fine for < 1000 items. For more, we'd use DB annotations.
@@ -30,6 +39,7 @@ def product_list(request):
         "sold_out": sold_out_products,
         "categories": categories,
         "current_category": int(category_id) if category_id else None,
+        "search_query": query,
     }
     return render(request, "store/product_list.html", context)
 
