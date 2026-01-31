@@ -36,7 +36,7 @@ class ProductAdmin(ModelAdmin):  # Using Unfold's ModelAdmin
         "pairs_per_box",
     )
     search_fields = ("code", "name", "color", "size")
-    list_filter = ("category", "size")
+    list_filter = ("category", "color", "origin", "gender", "size")
     actions = ["quick_restock_5"]
 
     # Optimized Query for fast loading

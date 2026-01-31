@@ -14,7 +14,7 @@
                 {% for cat in categories %}
                 <a href="?category={{ cat.id }}"
                     class="category-link {% if current_category == cat.id %}active{% endif %}">
-                    <span>{{ cat.name }}</span>
+                    <span>{{ cat.name }} </span>
                 </a>
                 {% endfor %}
             </div>
@@ -54,7 +54,7 @@
                     <div class="card-body">
                         <small class="text-muted text-uppercase" style="font-size: 0.7rem;">
                             {{product.category.name|default:"Shoes" }}</small>
-                        <h5 class="card-title text-truncate fw-bold mb-1">{{ product.name }}</h5>
+                        <h5 class="card-title text-truncate fw-bold mb-1">{{ product.name }} ({{product.code}})</h5>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <span class="fs-5 fw-bold">${{ product.current_sell_price }}</span>
                             <span class="badge bg-light text-dark border">Size: {{ product.size }}</span>
